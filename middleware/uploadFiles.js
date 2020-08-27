@@ -1,9 +1,7 @@
-
 // Require multer for image uploading and multers3 to upload directly to s3
-const multer = require("multer");
+const multer = require('multer');
 /*const multerS3 = require('multer-s3');*/
 const path = require('path');
-
 
 /*
 // Configure aws s3 SDK (update authentication)
@@ -15,31 +13,29 @@ aws.config.update({
 });
 const s3 = new aws.S3();*/
 
-
 const checkFileType = (file, cb) => {
-  // Allowed ext
-  let filetypes;
-  if(file.fieldname === "profile_picture") {
-    filetypes = /jpeg|jpg|png|gif/;
-  }
-  else if(file.fieldname === "file") {
-    filetypes = /jpeg|jpg|png|gif|avi|mp4|wmv|f4v/;
-  }
-  
-  // Check ext
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  // Check mime
-  const mimetype = filetypes.test(file.mimetype);
+	// Allowed ext
+	let filetypes;
+	if (file.fieldname === 'profile_picture') {
+		filetypes = /jpeg|jpg|png|gif/;
+	} else if (file.fieldname === 'file') {
+		filetypes = /jpeg|jpg|png|gif|avi|mp4|wmv|f4v/;
+	}
 
-  if(mimetype && extname){
-      return cb(null,true);
-  } else {
-      return cb(new Error(`Error: Wrong Format chosen! Please only use ${filetypes}` ), false);
-      
-  }
-}
+	// Check ext
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	// Check mime
+	const mimetype = filetypes.test(file.mimetype);
 
-
+	if (mimetype && extname) {
+		return cb(null, true);
+	} else {
+		return cb(
+			new Error(`Error: Wrong Format chosen! Please only use ${filetypes}`),
+			false
+		);
+	}
+};
 
 /* customized filename as well? Or the key the filename here?
 filename: function (req, file, cb) {
@@ -48,18 +44,18 @@ filename: function (req, file, cb) {
 */
 
 exports.upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'public') //cb stands for callback 
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.fieldname + Date.now() + file.originalname)
-    }
-  }),
-  //limits:{fileSize: 1000000},
-  fileFilter: (req, file, cb) => {
-      checkFileType(file, cb);
-  }
+	storage: multer.diskStorage({
+		destination: function (req, file, cb) {
+			cb(null, 'public'); //cb stands for callback
+		},
+		filename: function (req, file, cb) {
+			cb(null, file.fieldname + Date.now() + file.originalname);
+		}
+	}),
+	//limits:{fileSize: 1000000},
+	fileFilter: (req, file, cb) => {
+		checkFileType(file, cb);
+	}
 });
 
 /*
@@ -91,6 +87,5 @@ const upload = multer({
     }
   })
 });*/
-
 
 //?? Missing: Error Handler

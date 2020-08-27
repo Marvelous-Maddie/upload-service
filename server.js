@@ -1,11 +1,12 @@
 // Imports
 const express = require('express');
 const dotenv = require('dotenv');
-const path = require('path'); 
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const colors = require('colors');
 const connectDB = require('./config/db');
+const errorHandler = require('./middleware/errorHandler');
 // Define config file
 dotenv.config({ path: './config/config.env' });
 // Connect to DB
@@ -20,6 +21,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, './public/')));
 // Parse request body
 app.use(express.json());
+// Cors
 app.use(cors());
 // Logger for dev mode
 if (process.env.NODE_ENV === 'development') {
@@ -27,6 +29,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 // Routes
 app.use('/', upload);
+// Error handler
+app.use(errorHandler);
 // Listen
 const server = app.listen(
 	port,
